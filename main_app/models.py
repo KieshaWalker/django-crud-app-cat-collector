@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 
+
 # A tuple of 2-tuples added above our models
 MEALS = (
     ('B', 'Breakfast'),
@@ -8,18 +9,15 @@ MEALS = (
     ('D', 'Dinner')
 )
 class Cat(models.Model):
+    id = models.AutoField(primary_key=True)  # Explicitly declare for IDE support
     name = models.CharField(max_length=100)
     breed = models.CharField(max_length=100)
     description = models.TextField(max_length=250)
     age = models.IntegerField()
 
-    def __str__(self):
-        return self.name
-    
-        # Define a method to get the URL for this particular cat instance
     def get_absolute_url(self):
         # Use the 'reverse' function to dynamically find the URL for viewing this cat's details
-        return reverse('cat-detail', kwargs={'cat_id': self.id})
+        return reverse('cat-detail', kwargs={'cat_id': self.id})    
 
 class Feeding(models.Model):
     date = models.DateField()
@@ -28,8 +26,10 @@ class Feeding(models.Model):
         choices=MEALS,
         default=MEALS[0][0]
     )
-    # Create a cat_id column for each feeding in the database
-    cat = models.ForeignKey(Cat, on_delete=models.CASCADE)
+    cat = models.ForeignKey(Cat, on_delete=models.CASCADE, related_name= 'feedings')
 
     def __str__(self):
-        return f"{self.get_meal_display()} on {self.date}"
+        return f"{self.get_meal_display()} on {self.date}" # type: ignore
+    
+    class Meta:
+        ordering = ['-date']

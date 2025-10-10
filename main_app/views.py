@@ -1,13 +1,14 @@
 # main_app/views.py
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import admin
 from django.views.generic.edit import CreateView
 # Add UdpateView & DeleteView
 from django.views.generic.edit import UpdateView, DeleteView
 
-from .models import Cat
-admin.site.register(Cat)
+from .models import Cat, Feeding
+from .forms import FeedingForm
+
 
 
 # Import HttpResponse to send text-based responses
@@ -36,9 +37,6 @@ def cat_index(request):
     cats = Cat.objects.all()  # look familiar?
     return render(request, 'cats/index.html', {'cats': cats})
 
-def cat_detail(request, cat_id):
-    cat = Cat.objects.get(id=cat_id)
-    return render(request, 'cats/detail.html', {'cat': cat})
 class CatCreate(CreateView):
     model = Cat
     fields = '__all__'
@@ -50,3 +48,26 @@ class CatUpdate(UpdateView):
 class CatDelete(DeleteView):
     model = Cat
     success_url = '/cats/'
+
+def cat_detail(request, cat_id):
+    cat = Cat.objects.get(id=cat_id)
+    # instantiate FeedingForm to be rendered in the template
+    feeding_form = FeedingForm()
+    return render(request, 'cats/detail.html', {
+        # include the cat and feeding_form in the context
+        'cat': cat, 'feeding_form': feeding_form,
+    })
+
+def add_feeding(request, cat_id):
+    # create a ModelForm instance using the data in request.POST
+    form = FeedingForm(request.POST)
+    # validate the form
+    if form.is_valid():
+        # don't save the form to the db until it
+        # has the cat_id assigned
+        new_feeding = form.save(commit=False)
+        new_feeding.cat_id = cat_id
+        new_feeding.save()
+        print(Feeding)
+    return redirect('cat-detail', cat_id=cat_id)
+    
