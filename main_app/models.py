@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
-
+from datetime import date
+from django.contrib.auth.models import User
 
 # A tuple of 2-tuples added above our models
 MEALS = (
@@ -14,6 +15,8 @@ class Cat(models.Model):
     breed = models.CharField(max_length=100)
     description = models.TextField(max_length=250)
     age = models.IntegerField()
+    toys = models.ManyToManyField('Toy')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def get_absolute_url(self):
         # Use the 'reverse' function to dynamically find the URL for viewing this cat's details
