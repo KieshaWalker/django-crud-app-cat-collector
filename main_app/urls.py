@@ -15,4 +15,11 @@ urlpatterns = [
         views.add_feeding, 
         name='add_feeding'
     ),
+    path('toys/create/', views.ToyCreate.as_view(), name='toy-create'),
+    path('toys/<int:pk>/', views.toy_detail, name='toy-detail'),
+    path('toys/<int:pk>/', views.ToyDetail.as_view(), name='toy-detail'),
+    path('toys/', views.ToyList.as_view(), name='toy-index'),
+    path('toys/<int:pk>/update/', views.ToyUpdate.as_view(), name='toy-update'),
+    path('toys/<int:pk>/delete/', views.ToyDelete.as_view(), name='toy-delete'),
+
 ]
